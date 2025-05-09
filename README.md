@@ -19,7 +19,7 @@
 ## Requirements
 
 - GNOME Shell 42 or later
-- A Google account with access to Google Gemini 1.5 Flash API
+- A Google account with access to Google Gemini API (flash model suggested)
 - A Google Gemini API key
 - XClip (for image clipboard support): `sudo apt install xclip` on Debian/Ubuntu-based systems
 
@@ -29,7 +29,7 @@
 
 1. Clone this repository or download the source code:
    ```bash
-   git clone https://github.com/yourusername/gtranslator.git
+   git clone https://github.com/Griguoli09/gnome-shell-gtranslator-extension.git
    cd gtranslator
    ```
 

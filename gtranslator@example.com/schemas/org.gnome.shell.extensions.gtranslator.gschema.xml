@@ -11,6 +11,11 @@
             <summary>Lingua di destinazione</summary>
             <description>La lingua in cui tradurre il testo</description>
         </key>
+        <key name="custom-language" type="s">
+            <default>'hungarian'</default>
+            <summary>Lingua personalizzata</summary>
+            <description>Una lingua personalizzata che non è presente nel menu predefinito</description>
+        </key>
         <key name="auto-copy" type="b">
             <default>true</default>
             <summary>Copia automaticamente</summary>

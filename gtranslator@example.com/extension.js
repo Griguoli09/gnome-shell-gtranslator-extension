@@ -22,7 +22,7 @@ const LANGUAGES = {
     'zh': '中文 (Chinese)',
     'ja': '日本語 (Japanese)',
     'ru': 'Русский (Russian)',
-    'ar': 'العربية (Arabic)'
+    'custom': 'Custom Language'
 };
 
 // Main function of the extension
@@ -1038,13 +1038,30 @@ class GTranslatorIndicator extends PanelMenu.Button {
         
         // Get the selected target language
         let targetLang = this._settings.get_string('target-language');
+        let targetLangName;
+        
+        // Gestione speciale per la lingua personalizzata
+        if (targetLang === 'custom') {
+            // Recupera il nome della lingua personalizzata dalle impostazioni
+            let customLanguage = this._settings.get_string('custom-language');
+            if (!customLanguage || customLanguage.trim() === '') {
+                this._showError('Custom language not configured. Please set it in the preferences.');
+                return;
+            }
+            
+            targetLangName = customLanguage.trim();
+            log(`[GTranslator] Using custom language: ${targetLangName}`);
+        } else {
+            // Per le lingue predefinite, usa il nome dal dizionario
+            targetLangName = this._getLanguageNameByCode(targetLang);
+        }
         
         // Build the prompt for Gemini
         let prompt = '';
         if (context && context.trim() !== '') {
-            prompt = `Translate the following text into ${this._getLanguageNameByCode(targetLang)} (language code: ${targetLang}), considering the following context: '${context.trim()}'. Return only the translated text, without comments or explanations. Text to translate: '${text.trim()}'`;
+            prompt = `Translate the following text into ${targetLangName}, considering the following context: '${context.trim()}'. Return only the translated text, without comments or explanations. Text to translate: '${text.trim()}'`;
         } else {
-            prompt = `Translate the following text into ${this._getLanguageNameByCode(targetLang)} (language code: ${targetLang}). Return only the translated text, without comments or explanations. Text to translate: '${text.trim()}'`;
+            prompt = `Translate the following text into ${targetLangName}. Return only the translated text, without comments or explanations. Text to translate: '${text.trim()}'`;
         }
         
         // Show the loading indicator

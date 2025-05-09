@@ -15,7 +15,7 @@ const LANGUAGES = {
     'zh': '中文 (Chinese)',
     'ja': '日本語 (Japanese)',
     'ru': 'Русский (Russian)',
-    'ar': 'العربية (Arabic)'
+    'custom': 'Custom Language'
 };
 
 function init() {
@@ -112,6 +112,27 @@ function fillPreferencesWindow(window) {
     });
     
     translationGroup.add(languageRow);
+    
+    // Aggiungo il campo per la lingua personalizzata
+    const customLangRow = new Adw.ActionRow({
+        title: 'Custom Language',
+        subtitle: 'Write a custom language name to use when "Custom Language" is selected'
+    });
+    
+    // Create a text field for the custom language
+    const customLangEntry = new Gtk.Entry({
+        text: settings.get_string('custom-language') || 'hungarian',
+        valign: Gtk.Align.CENTER,
+        hexpand: true
+    });
+    
+    customLangEntry.connect('changed', (entry) => {
+        settings.set_string('custom-language', entry.get_text());
+    });
+    
+    customLangRow.add_suffix(customLangEntry);
+    customLangRow.set_activatable_widget(customLangEntry);
+    translationGroup.add(customLangRow);
     
     // Option to enable/disable auto-copy - using ActionRow with Switch as suffix
     const autoCopyRow = new Adw.ActionRow({

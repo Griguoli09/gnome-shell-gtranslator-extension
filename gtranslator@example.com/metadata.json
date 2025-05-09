@@ -1,0 +1,9 @@
+{
+  "name": "GTranslator",
+  "description": "Traduci testo utilizzando l'API Google Gemini direttamente dalla barra superiore di GNOME",
+  "uuid": "gtranslator@example.com",
+  "shell-version": ["42", "43", "44", "45"],
+  "url": "https://github.com/yourusername/gtranslator",
+  "version": 1,
+  "settings-schema": "org.gnome.shell.extensions.gtranslator"
+}

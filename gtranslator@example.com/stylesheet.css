@@ -1,0 +1,95 @@
+/* Stili per GTranslator */
+
+/* Stile generale dei label */
+.gtranslator-label {
+    margin-bottom: 4px;
+    font-weight: bold;
+}
+
+/* Stile per i campi di input */
+.gtranslator-entry {
+    min-height: 60px;
+    border-radius: 6px;
+    margin-bottom: 4px;
+    border: 1px solid rgba(120, 120, 120, 0.3);
+    padding: 4px;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.gtranslator-entry:focus {
+    border-color: #4a90d9;
+    border-width: 2px;
+}
+
+/* Stile per i contenitori di scrolling */
+.gtranslator-scrollview {
+    min-height: 60px;
+    max-height: 150px;
+    border-radius: 6px;
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Stile per il risultato della traduzione */
+.gtranslator-result {
+    margin-top: 4px;
+    padding: 8px;
+    border-radius: 6px;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Stile per i pulsanti */
+.gtranslator-button {
+    margin-top: 4px;
+    margin-bottom: 4px;
+    border-radius: 6px;
+    padding: 6px 12px;
+}
+
+.gtranslator-button:hover {
+    background-color: rgba(120, 120, 120, 0.2);
+}
+
+.gtranslator-button:active {
+    background-color: rgba(120, 120, 120, 0.3);
+}
+
+/* Stile per la notifica di copia */
+.gtranslator-notification {
+    color: #4e9a06;
+    font-weight: bold;
+    margin-top: 8px;
+    text-align: center;
+}
+
+/* Stile per gli errori */
+.error {
+    color: #cc0000;
+    font-style: italic;
+}
+
+/* Stili per la finestra espansa */
+.gtranslator-expanded-window {
+    background-color: rgba(40, 40, 40, 0.95);
+    border-radius: 8px;
+    border: 1px solid rgba(120, 120, 120, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+}
+
+.gtranslator-expanded-title {
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.gtranslator-expanded-entry {
+    min-height: 300px;
+    border-radius: 6px;
+    border: 1px solid rgba(120, 120, 120, 0.3);
+    padding: 8px;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.gtranslator-expanded-entry:focus {
+    border-color: #4a90d9;
+    border-width: 2px;
+}

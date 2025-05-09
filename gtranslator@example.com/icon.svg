@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="64"
+   height="64"
+   viewBox="0 0 64 64"
+   version="1.1"
+   id="svg10"
+   sodipodi:docname="icon.svg"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs14" />
+  <sodipodi:namedview
+     id="namedview12"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="11.15625"
+     inkscape:cx="31.955182"
+     inkscape:cy="35.809524"
+     inkscape:window-width="1920"
+     inkscape:window-height="1133"
+     inkscape:window-x="0"
+     inkscape:window-y="31"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg10" />
+  <!-- Background circle -->
+  <!-- Simple speech bubble with 'G' -->
+  <!-- G for Google/Gemini -->
+  <!-- Minimalist translation symbol -->
+  <g
+     id="g11"
+     transform="matrix(0.88252575,0,0,0.88252575,-1.7072456,-1.5911632)">
+    <circle
+       cx="38.223919"
+       cy="38.223919"
+       fill="#3584e4"
+       id="circle2"
+       r="36.223919"
+       style="stroke-width:1.20746" />
+    <path
+       d="m 23.734352,23.734352 h 28.979136 c 3.984631,0 7.244784,3.260153 7.244784,7.244784 v 14.489568 c 0,3.984631 -3.260153,7.244784 -7.244784,7.244784 h -7.244784 l -7.244784,7.244784 -7.244784,-7.244784 h -7.244784 c -3.984631,0 -7.244784,-3.260153 -7.244784,-7.244784 V 30.979136 c 0,-3.984631 3.260153,-7.244784 7.244784,-7.244784 z"
+       fill="#ffffff"
+       id="path4"
+       style="stroke-width:1.20746" />
+    <text
+       x="38.223919"
+       y="45.754524"
+       font-family="Ubuntu, Sans-serif"
+       font-size="26.5642px"
+       font-weight="bold"
+       text-anchor="middle"
+       fill="#3584e4"
+       id="text6"
+       style="stroke-width:1.20746">G</text>
+  </g>
+</svg>

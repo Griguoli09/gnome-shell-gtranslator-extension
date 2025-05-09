@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="gtranslator@example.com">
+    <schema id="org.gnome.shell.extensions.gtranslator" path="/org/gnome/shell/extensions/gtranslator/">
+        <key name="api-key" type="s">
+            <default>''</default>
+            <summary>Google Gemini API Key</summary>
+            <description>L'API key per utilizzare Google Gemini</description>
+        </key>
+        <key name="target-language" type="s">
+            <default>'it'</default>
+            <summary>Lingua di destinazione</summary>
+            <description>La lingua in cui tradurre il testo</description>
+        </key>
+        <key name="auto-copy" type="b">
+            <default>true</default>
+            <summary>Copia automaticamente</summary>
+            <description>Copia automaticamente la traduzione negli appunti</description>
+        </key>
+    </schema>
+</schemalist>

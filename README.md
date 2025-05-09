@@ -1,6 +1,6 @@
 # GTranslator - GNOME Shell Extension
 
-**GTranslator** is a GNOME Shell extension that adds an icon to the top bar (panel) and allows you to translate text using the Google Gemini API (1.5 Flash model). The extension automatically copies the translated text to your clipboard for easy use.
+**GTranslator** is a GNOME Shell extension that adds an icon to the top bar (panel) and allows you to translate text using the Google Gemini API. The extension automatically copies the translated text to your clipboard for easy use.
 
 ![Screenshot of GTranslator extension](screenshot.png)
 *(Screenshot will be added later)*

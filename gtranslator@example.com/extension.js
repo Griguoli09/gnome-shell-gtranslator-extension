@@ -66,6 +66,7 @@ class GTranslatorIndicator extends PanelMenu.Button {
         
         this._settings = settings;
         this._httpSession = httpSession;
+        this._languagePopupMenu = null; // Initialize language popup menu
         
         // Add a custom SVG icon to the panel
         let iconPath = Me.dir.get_child('icon.svg').get_path();
@@ -80,8 +81,38 @@ class GTranslatorIndicator extends PanelMenu.Button {
         
         this._buildMenu();
         
+        // Connect a handler to refresh the language button label when the main menu opens
+        if (this.menu) {
+            this.menu.connect('open-state-changed', (menu, isOpen) => {
+                log(`[GTranslator] Main menu ${isOpen ? 'opened' : 'closed'}.`);
+                if (isOpen && this._languageButtonLabel && typeof this._getLanguageNameByCode === 'function' && this._settings) {
+                    try {
+                        let currentLangCode = this._settings.get_string('target-language');
+                        let currentLangName = this._getLanguageNameByCode(currentLangCode);
+                        log(`[GTranslator] Main menu opened. Target lang from settings: ${currentLangName} (${currentLangCode})`);
+                        if (currentLangName) {
+                            this._languageButtonLabel.set_text(currentLangName);
+                            log(`[GTranslator] Language button label refreshed to: ${currentLangName}. Actual label text: ${this._languageButtonLabel.get_text()}`);
+                        } else {
+                            log(`[GTranslator] WARNING: currentLangName is null for code ${currentLangCode} on main menu open.`);
+                        }
+                    } catch (e) {
+                        log(`[GTranslator] ERROR refreshing language button label on main menu open: ${e.message}`);
+                    }
+                } else if (isOpen) {
+                    log(`[GTranslator] WARNING: Cannot refresh lang button label on main menu open. Conditions not met: _languageButtonLabel=${!!this._languageButtonLabel}, _getLanguageNameByCode=${typeof this._getLanguageNameByCode}, _settings=${!!this._settings}`);
+                }
+            });
+        } else {
+            log('[GTranslator] ERROR: this.menu is not available in _init for open-state-changed connection.');
+        }
+        
         // Variable to keep track of loading state
         this._isLoading = false;
+    }
+    
+    destroy() {
+        super.destroy();
     }
     
     _buildMenu() {
@@ -291,28 +322,27 @@ class GTranslatorIndicator extends PanelMenu.Button {
         });
         controlsContainer.add_child(targetLangLabel);
         
-        // Create the dropdown for language selection
-        let targetLanguageItem = new PopupMenu.PopupSubMenuMenuItem(
-            this._getLanguageNameByCode(this._settings.get_string('target-language')) || 'Italiano'
-        );
+        // Recupero il codice lingua corrente
+        let currentLangCode = this._settings.get_string('target-language');
+        let currentLangName = this._getLanguageNameByCode(currentLangCode) || _('Select Language');
         
-        // Populate the dropdown menu with supported languages
-        for (let langCode in LANGUAGES) {
-            let langItem = new PopupMenu.PopupMenuItem(LANGUAGES[langCode]);
-            langItem.connect('activate', () => {
-                this._settings.set_string('target-language', langCode);
-                targetLanguageItem.label.text = LANGUAGES[langCode];
-            });
-            targetLanguageItem.menu.addMenuItem(langItem);
-        }
-        
-        this._targetLanguageMenuItem = targetLanguageItem;
-        
-        // Create a widget to contain the dropdown menu
-        let targetLanguageContainer = new St.Bin({
-            child: targetLanguageItem,
+        // Creo un pulsante per mostrare la lingua corrente
+        this._languageButtonLabel = new St.Label({
+            text: currentLangName,
+            style_class: 'gtranslator-language-label',
+            y_align: Clutter.ActorAlign.CENTER,
             x_expand: true
         });
+        
+        let languageButton = new St.Button({
+            style_class: 'button gtranslator-language-button',
+            child: this._languageButtonLabel,
+            can_focus: true,
+            reactive: true,
+            track_hover: true,
+            x_expand: true
+        });
+        controlsContainer.add_child(languageButton);
         
         // Translate button
         this._translateButton = new St.Button({
@@ -323,9 +353,103 @@ class GTranslatorIndicator extends PanelMenu.Button {
             reactive: true,
             track_hover: true
         });
-        controlsContainer.add_child(targetLanguageContainer);
         controlsContainer.add_child(this._translateButton);
         mainContainer.add_child(controlsContainer);
+        
+        // Aggiungiamo una sezione separata per la selezione della lingua nel menu principale
+        this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
+        
+        // Titolo sezione lingue
+        let languageSectionTitle = new PopupMenu.PopupMenuItem(_('Select Target Language'), { reactive: false });
+        languageSectionTitle.label.add_style_class_name('gtranslator-section-title');
+        languageSectionTitle.actor.add_style_class_name('gtranslator-section-title-item');
+        this.menu.addMenuItem(languageSectionTitle);
+        
+        // Creiamo un popup menu item con un contenitore per i pulsanti delle lingue
+        let languagesMenuItem = new PopupMenu.PopupBaseMenuItem({
+            reactive: false,
+            can_focus: false
+        });
+        
+        // Contenitore a griglia per i pulsanti delle lingue
+        let languageGrid = new St.BoxLayout({
+            vertical: true,
+            style: 'spacing: 4px; padding: 4px;'
+        });
+        
+        // Numero di colonne per la griglia - aumentato a 3 per risparmiare spazio
+        const COLS = 3;
+        let currentRow = null;
+        let col = 0;
+        
+        // Ottieni il codice lingua corrente
+        currentLangCode = this._settings.get_string('target-language');
+        
+        // Aggiungi i pulsanti per tutte le lingue disponibili
+        for (let langCode in LANGUAGES) {
+            if (Object.prototype.hasOwnProperty.call(LANGUAGES, langCode)) {
+                // Crea una nuova riga quando necessario
+                if (col % COLS === 0) {
+                    currentRow = new St.BoxLayout({
+                        style: 'spacing: 4px;',
+                        x_expand: true
+                    });
+                    languageGrid.add_child(currentRow);
+                }
+                
+                // Ottieni il nome della lingua
+                let langName = LANGUAGES[langCode];
+                
+                // Crea un pulsante compatto per questa lingua
+                let langButton = new St.Button({
+                    style_class: 'button gtranslator-lang-button',
+                    label: langName,
+                    x_expand: true,
+                    can_focus: true,
+                    reactive: true,
+                    track_hover: true,
+                    style: 'padding: 4px 8px; font-size: 12px;' // Pulsanti più piccoli
+                });
+                
+                // Evidenzia la lingua attualmente selezionata
+                if (langCode === currentLangCode) {
+                    langButton.add_style_class_name('selected-language');
+                    this._selectedLangButton = langButton; // Mantieni un riferimento al pulsante selezionato
+                }
+                
+                // Aggiungi un handler al clic del pulsante
+                langButton.connect('clicked', () => {
+                    // Rimuovi l'evidenziazione dal pulsante precedentemente selezionato
+                    if (this._selectedLangButton) {
+                        this._selectedLangButton.remove_style_class_name('selected-language');
+                    }
+                    
+                    // Imposta la nuova lingua
+                    this._settings.set_string('target-language', langCode);
+                    
+                    // Aggiorna l'etichetta sul pulsante principale
+                    this._languageButtonLabel.set_text(langName);
+                    
+                    // Evidenzia questo pulsante
+                    langButton.add_style_class_name('selected-language');
+                    this._selectedLangButton = langButton;
+                    
+                    log(`[GTranslator] Lingua impostata a: ${langName} (${langCode})`);
+                });
+                
+                // Aggiungi il pulsante alla riga corrente
+                currentRow.add_child(langButton);
+                
+                // Incrementa il contatore di colonne
+                col++;
+            }
+        }
+        
+        // Aggiungi la griglia di lingue al menu item
+        languagesMenuItem.add_child(languageGrid);
+        
+        // Aggiungi il menu item al menu principale
+        this.menu.addMenuItem(languagesMenuItem);
         
         // Container for additional buttons
         let actionsContainer = new St.BoxLayout({
@@ -373,28 +497,58 @@ class GTranslatorIndicator extends PanelMenu.Button {
         });
         mainContainer.add_child(targetLabel);
         
-        // Translation result - output field with improved scrollbar
+        // Container for the translation result, mainly for styling (padding, borders via CSS)
         let resultContainer = new St.BoxLayout({
-            style_class: 'gtranslator-result',
+            style_class: 'gtranslator-result', // Keeps existing styling for padding/borders
             vertical: true,
             x_expand: true,
-            style: 'min-height: 80px; max-height: 200px;'
+            y_expand: true, // Allow this container to expand vertically
+            style: 'min-height: 80px; max-height: 200px;' // Define height constraints 
+        });
+
+        // ScrollView for the translation output
+        this._resultScrollView = new St.ScrollView({
+            overlay_scrollbars: false, // Changed to false to make scrollbar always visible when needed
+            hscrollbar_policy: St.PolicyType.NEVER,     // Never show horizontal scrollbar
+            vscrollbar_policy: St.PolicyType.AUTOMATIC, // Show vertical scrollbar automatically
+            enable_mouse_scrolling: true,
+            x_expand: true,
+            y_expand: true // ScrollView should expand to fill its parent (resultContainer)
+            // min-height and max-height are now controlled by resultContainer's style
         });
         
-        this._targetTextLabel = new St.Label({
-            text: '',
-            y_align: Clutter.ActorAlign.START,
-            x_expand: true
+        // Create a box container for the target text entry, similar to source/context boxes
+        let targetBox = new St.BoxLayout({ 
+            style_class: 'gtranslator-entry', // Use the same class as input boxes for consistent styling
+            vertical: true,
+            x_expand: true,
+            y_expand: false, // Height determined by content, enabling scrolling in ScrollView
+            style: 'padding: 8px;' // Consistent padding, like other text boxes
         });
         
-        // Set markup support in a compatible way
-        if (this._targetTextLabel.clutter_text) {
-            this._targetTextLabel.clutter_text.use_markup = true;
-            this._targetTextLabel.clutter_text.line_wrap = true;
-            this._targetTextLabel.clutter_text.line_wrap_mode = Pango.WrapMode.WORD_CHAR;
-        }
+        // Replace St.Label with a non-editable St.Entry for better scroll/wrap behavior
+        this._targetTextLabel = new St.Entry({
+            style_class: 'gtranslator-output-text', // For potential specific styling
+            can_focus: true,  // Changed to true to allow focus for selection
+            reactive: true, // Changed to true to allow text selection
+            x_expand: true,
+            // y_expand: true, // Removed: height will be content-driven within targetBox
+            style: 'border: none; background: none;' // Make it look like a label, transparent within targetBox
+        });
         
-        resultContainer.add_child(this._targetTextLabel);
+        let targetClutterText = this._targetTextLabel.get_clutter_text();
+        targetClutterText.single_line_mode = false;
+        targetClutterText.line_wrap = true;
+        targetClutterText.line_wrap_mode = Pango.WrapMode.WORD_CHAR;
+        targetClutterText.editable = false;
+        targetClutterText.use_markup = true; // Allow markup for error messages etc.
+        
+        // Add the St.Entry to the new targetBox
+        targetBox.add_child(this._targetTextLabel);
+        
+        // Add the targetBox (which contains the St.Entry) to the ScrollView
+        this._resultScrollView.add_actor(targetBox);
+        resultContainer.add_child(this._resultScrollView);    // Add the ScrollView to the styled container
         mainContainer.add_child(resultContainer);
         
         // Copy notification - label (initially hidden)
@@ -941,6 +1095,7 @@ class GTranslatorIndicator extends PanelMenu.Button {
                         
                         // Show the translated text
                         this._targetTextLabel.set_text(translatedText);
+                        this._updateScroll(this._resultScrollView); // Scroll to bottom
                         
                         // If auto-copy is enabled, copy to clipboard
                         if (this._settings.get_boolean('auto-copy')) {
@@ -972,6 +1127,7 @@ class GTranslatorIndicator extends PanelMenu.Button {
         if (this._targetTextLabel) {
             this._targetTextLabel.set_text(`Error: ${message}`);
             this._targetTextLabel.add_style_class_name('error');
+            this._updateScroll(this._resultScrollView); // Scroll to bottom
             
             // Remove the error class after a while
             GLib.timeout_add(GLib.PRIORITY_DEFAULT, 3000, () => {
@@ -1023,6 +1179,26 @@ class GTranslatorIndicator extends PanelMenu.Button {
             this._copiedNotification.add_transition('fade-out', fadeEffect);
             return GLib.SOURCE_REMOVE;
         });
+    }
+
+    _onLanguageSelected(langCode, langName) {
+        if (this._settings) {
+            // Aggiorno l'impostazione nella configurazione
+            this._settings.set_string('target-language', langCode);
+            
+            // Aggiorno l'etichetta del pulsante lingua
+            if (this._languageButtonLabel) {
+                this._languageButtonLabel.set_text(langName);
+                log(`[GTranslator] Lingua impostata a: ${langName} (${langCode})`);
+            }
+            
+            // Chiudo il menu delle lingue
+            if (this._languagePopupMenu) {
+                this._languagePopupMenu.close();
+            }
+        } else {
+            log(`[GTranslator] ERROR: Impossibile salvare la lingua. _settings non disponibile.`);
+        }
     }
 });
 

@@ -1,6 +1,11 @@
 # GTranslator - GNOME Shell Extension
 
-**GTranslator** is a GNOME Shell extension that adds an icon to the top bar (panel) and allows you to translate text using the Google Gemini API (1.5 Flash model). The extension automatically copies the translated text to your clipboard for easy use.
+**GTranslator** is a GNOME Shell extension that adds an icon to the top bar (panel) and allows you to translate text using the Google Gemini API. The extension automatically copies the translated text to your clipboard for easy use.
+
+The reason for this project? To leverage Gemini's translation capabilities, having everything readily available on your PC.  Furthermore, the distinguishing strength of this project is the possibility of adding "context." For example, in my case, studying electronic engineering in Italy, I often find myself needing to translate technical terms from certain subjects which, if not properly contextualized, result in insufficient or inappropriate translations.
+
+So, let's say I'm studying antenna theory and need to translate specific terms such as "the Thévenin equivalent voltage and input impedance of the tuned loop": in the "context" section I will add "you are a university professor teaching antenna theory and are a native speaker of <here you will insert the two languages, the one you are translating from and your native one>." In this way, the translation will be as contextualized as possible for your needs.
+
 
 ![Screenshot of GTranslator extension](screenshot.png)
 
@@ -18,7 +23,7 @@
 ## Requirements
 
 - GNOME Shell 42 or later
-- A Google account with access to Google Gemini 1.5 Flash API
+- A Google account with access to Google Gemini API (flash model suggested)
 - A Google Gemini API key
 - XClip (for image clipboard support): `sudo apt install xclip` on Debian/Ubuntu-based systems
 
@@ -29,7 +34,7 @@
 1. Clone this repository or download the source code:
    ```bash
    git clone https://github.com/Griguoli09/gnome-shell-gtranslator-extension.git
-   cd gtranslator
+   cd gnome-shell-gtranslator-extension
    ```
 
 2. Run the installation script:
